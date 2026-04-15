@@ -1,0 +1,6 @@
+{
+  "name": "AI Logo & Flyer Generator",
+  "description": "Generate professional logos and flyers using AI with parallel fallback logic.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

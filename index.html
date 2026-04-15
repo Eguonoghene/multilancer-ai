@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      // AGGRESSIVE FETCH PROTECTION
+      // This must run before ANY other script to prevent libraries from crashing the app
+      // by trying to overwrite the read-only window.fetch in the iframe sandbox.
+      (function() {
+        const protect = (obj) => {
+          if (!obj) return;
+          try {
+            const desc = Object.getOwnPropertyDescriptor(obj, 'fetch');
+            if (desc && (!desc.writable || !desc.set)) {
+              const originalFetch = obj.fetch;
+              try {
+                Object.defineProperty(obj, 'fetch', {
+                  get: () => originalFetch,
+                  set: (v) => { console.warn('Prevented fetch overwrite on', obj === window ? 'window' : 'globalThis'); },
+                  configurable: true,
+                  enumerable: true
+                });
+              } catch (e) {
+                // If we can't redefine it, we might be in trouble if something assigns to it.
+                // But at least we tried.
+              }
+            }
+          } catch (e) {}
+        };
+        protect(window);
+        protect(typeof globalThis !== 'undefined' ? globalThis : null);
+        protect(typeof self !== 'undefined' ? self : null);
+      })();
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Logo & Flyer Generator</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
